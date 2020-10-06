@@ -21,13 +21,13 @@ The emacs interface can be installed from [[https://melpa.org/][MELPA]] (eventua
 To connect to an existing etherpad server you need to configure the server url and have an API key.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package etherpad
-      :config (setq etherpad-server "http://example.org/"
-		    etherpad-apikey "…"
-		    etherpad-autosync nil)
-      :bind (("C-c e" . etherpad-edit)
-	     :map etherpad-mode-map
-	     ("C-c c" . etherpad-save)))
+    (use-package etherpad
+	:config (setq etherpad-server "http://example.org/"
+		      etherpad-apikey "…"
+		      etherpad-autosync nil)
+	:bind (("C-c e" . etherpad-edit)
+	       :map etherpad-mode-map
+	       ("C-c c" . etherpad-save)))
 #+END_SRC
 
 To open a pad for editing try ~M-x etherpad-edit~ and enter the name of the pad.
