@@ -10,13 +10,13 @@ The Etherpad API provides a way to add, delete and edit pads. It also enables ac
 
 ** un-collaborative editing
 
-This package enables read-write access to pads but is not (yet) suitable for use as an Etherpad client (compare [[https://github.com/JohnMcLear/etherpad-cli-client][etherpad-cli-client]])
+This package enables read-write access to pads with emacs, but is not (yet) suitable for general use as an Etherpad client (compare [[https://github.com/JohnMcLear/etherpad-cli-client][etherpad-cli-client]])
 
 It provides a quick&dirty way to edit pads on an Etherpad server from emacs as if they were filelike (It uses the Etherpad API rather than the socket.io interface). It doesn’t (yet) provide a real-time interface for collaborative editing and will overwrite author information. It tries to warn you if the pad on the server has been changed if editing asynchronously (c.f ’file changed on disk’) There is a simplistic autosync mode where every change to the local buffer is written to the server, which is slow (there is a complete pad update for every character) inefficient, and collision prone (since it relies on revision numbers to sync). There is no diff interface or way to resolve divergent changes.
 
 ** install & configure
 
-The emacs interface can be installed from [[https://melpa.org/][MELPA]] (eventually) or manually via [[https://github.com/zzkt/etherpad-emacs][github]].
+The etherpad emacs interface can be installed from [[https://melpa.org/][MELPA]] (eventually) or manually via [[https://github.com/zzkt/etherpad-emacs][github]].
 
 To connect to an existing etherpad server you need to configure the server url and have an API key.
 
