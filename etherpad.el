@@ -1,4 +1,4 @@
-;;; etherpad.el --- etherpad API -*- coding: utf-8; lexical-binding: t -*-
+;;; etherpad.el --- Interface to the Etherpad API -*- coding: utf-8; lexical-binding: t -*-
 
 ;; Copyright 2020 FoAM
 ;;
@@ -6,8 +6,8 @@
 ;; Created: 2020-08-08
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "26.1") (request "0.3") (let-alist "0.0"))
-;; Keywords: etherpad, collaborative editing,
-;; URL: https://github.com/zzkt/etherpad-emacs
+;; Keywords: comm, etherpad, collaborative editing
+;; URL: https://github.com/zzkt/ethermacs
 
 ;; This file is not part of GNU Emacs.
 
