@@ -72,9 +72,18 @@
   "Sync with etherpad server whenever auto-save is triggered."
   :type 'boolean)
 
+(defvar etherpad--local-pad-name ""
+   "Buffer local pad details.")
+
+(defvar etherpad--local-pad-revision ""
+  "Buffer local pad details.")
+
+
+;; API functions
+
 (defun etherpad-openapi ()
   "Find API details using openAPI endpoint.
-Should be available at http://<host>/api/1/openapi.json"
+Should be available at https://<host>/api/1/openapi.json"
   (interactive)
   (request
     (format "%s/api/1/openapi.json" etherpad-server)
@@ -127,7 +136,7 @@ Should be available at http://<host>/api/1/openapi.json"
     :parser 'json-read
     :success (cl-function
               (lambda (&key data &allow-other-keys)
-                (message "written to %s: %s" pad-id text)))
+                (message "written to %s: %s\ndata: %s\n" pad-id text data)))
     :error (cl-function
             (lambda (&rest args &key error-thrown &allow-other-keys)
               (error "Etherpad API error: %s" error-thrown)))))
@@ -143,12 +152,12 @@ Should be available at http://<host>/api/1/openapi.json"
          (pad-buffer (get-buffer-create (format "%s:%s at %s" pad-id pad-remote-revision etherpad-server)))
          (pad-text (etherpad--api-get-text pad-id)))
     (with-current-buffer pad-buffer
-      (setq-local pad-name pad-id
-                  pad-revision (etherpad--api-pad-revision pad-id))
+      (setq-local etherpad--local-pad-name pad-id
+                  etherpad--local-pad-revision (etherpad--api-pad-revision pad-id))
       (goto-char (point-min))
       (erase-buffer)
       (insert pad-text)
-      (message (format "opening pad: %s rev: %s" pad-name pad-revision))
+      (message "opening pad: %s rev: %s" etherpad--local-pad-name etherpad--local-pad-revision)
       (goto-char (point-max))
       (display-buffer pad-buffer)
       (make-local-variable 'etherpad-autosync)
@@ -160,20 +169,20 @@ Should be available at http://<host>/api/1/openapi.json"
 (defun etherpad-update (&optional pad-id)
   "Update current buffer with text from a remote pad (PAD-ID)."
   (interactive "sName of the pad to sync from: ")
-  (when (not pad-id) (setq pad-id pad-name))
-  (message (format "pad-id: %s pad-name: %s (buffer local)" pad-id pad-name))
+  (when (not pad-id) (setq pad-id etherpad--local-pad-name))
+  (message "pad-id: %s etherpad--local-pad-name: %s (buffer local)" pad-id etherpad--local-pad-name)
   ;; note: check if pad-id exists and/or create new pad as required
   (let* ((pad-remote-revision (etherpad--api-pad-revision pad-id))
          (pad-buffer (current-buffer))
          (pad-text (etherpad--api-get-text pad-id)))
     (with-current-buffer pad-buffer
-      (setq-local pad-name pad-id
-                  pad-revision pad-remote-revision)
-      (rename-buffer (format "%s:%s at %s" pad-name pad-revision etherpad-server))
+      (setq-local etherpad--local-pad-name pad-id
+                  etherpad--local-pad-revision pad-remote-revision)
+      (rename-buffer (format "%s:%s at %s" etherpad--local-pad-name etherpad--local-pad-revision etherpad-server))
       (goto-char (point-min))
       (erase-buffer)
       (insert pad-text)
-      (message (format "synced from pad: %s rev: %s" pad-name pad-revision))
+      (message "synced from pad: %s rev: %s" etherpad--local-pad-name etherpad--local-pad-revision)
       (goto-char (point-max))
       (display-buffer pad-buffer)
       pad-buffer)))
@@ -182,33 +191,33 @@ Should be available at http://<host>/api/1/openapi.json"
 ;;;###autoload
 (defun etherpad-save ()
   "Write a buffer to an etherpad.
-'pad-name' and 'pad-revision' are buffer local"
+'etherpad--local-pad-name' and 'etherpad--local-pad-revision' are buffer local"
   (interactive)
   ;; show diffs, merge, update, etc+
   ;; and save...
-  (message (format "preparing to write %s revision %s (from '%s')"  pad-name (1+ pad-revision) (current-buffer)))
+  (message "preparing to write %s revision %s (from '%s')"  etherpad--local-pad-name (1+ etherpad--local-pad-revision) (current-buffer))
   ;; check for version drift & update revision
-  (let* ((remote-revision (etherpad--api-pad-revision pad-name))
-          (local-revision pad-revision))
+  (let* ((remote-revision (etherpad--api-pad-revision etherpad--local-pad-name))
+          (local-revision etherpad--local-pad-revision))
     (if (> remote-revision local-revision)
         (when (y-or-n-p
                (format "Text is out of sync with pad on the server (revision %s > %s) resync? "
                        remote-revision local-revision))
-          (etherpad-update pad-name))
+          (etherpad-update etherpad--local-pad-name))
       (progn
-        (etherpad--api-set-text pad-name (buffer-string))
-        (message (format "wrote to pad: %s revision %s" pad-name (etherpad--api-pad-revision pad-name)))
-        (setq pad-revision (etherpad--api-pad-revision pad-name))
-        (message (format "new revision? %s" pad-revision))
-        (rename-buffer (format "%s:%s at %s" pad-name pad-revision etherpad-server))
-        (message (format "pad has been synced (at revision %s)" pad-revision))))))
+        (etherpad--api-set-text etherpad--local-pad-name (buffer-string))
+        (message "wrote to pad: %s revision %s" etherpad--local-pad-name (etherpad--api-pad-revision etherpad--local-pad-name))
+        (setq etherpad--local-pad-revision (etherpad--api-pad-revision etherpad--local-pad-name))
+        (message "new revision? %s" etherpad--local-pad-revision)
+        (rename-buffer (format "%s:%s at %s" etherpad--local-pad-name etherpad--local-pad-revision etherpad-server))
+        (message "pad has been synced (at revision %s)" etherpad--local-pad-revision)))))
 
 
 (defun etherpad-before-change-function (begin end)
 "Function to run before etherpad update (buffer BEGIN and END).
 should be specific to minor mode and buffer local."
-  (let* ((remote-revision (etherpad--api-pad-revision pad-name))
-         (local-revision pad-revision))
+  (let* ((remote-revision (etherpad--api-pad-revision etherpad--local-pad-name))
+         (local-revision etherpad--local-pad-revision))
     (when (> remote-revision local-revision)
       (etherpad-update))))
 
@@ -230,17 +239,17 @@ should be specific to minor mode and buffer local."
   "Enable autosync."
   (interactive)
   (message "enabled autosync with etherpad server.")
-  (make-local-variable 'after-change-functions)
-  (make-local-variable 'before-change-functions)
-  (add-hook 'after-change-functions 'etherpad-after-change-function)
-  (add-hook 'before-change-functions 'etherpad-before-change-function))
+  (make-local-variable #'after-change-functions)
+  (make-local-variable #'before-change-functions)
+  (add-hook 'after-change-functions #'etherpad-after-change-function)
+  (add-hook 'before-change-functions #'etherpad-before-change-function))
 
 (defun etherpad-autosync-disable ()
   "Disable autosync."
   (interactive)
   (message "disabled autosync with etherpad server.")
-  (remove-hook 'after-change-functions 'etherpad-after-change-function)
-  (remove-hook 'before-change-functions 'etherpad-before-change-function))
+  (remove-hook 'after-change-functions #'etherpad-after-change-function)
+  (remove-hook 'before-change-functions #'etherpad-before-change-function))
 
 (defun etherpad-idlesync-enable ()
   "Sync pad whenever auto-save would."
@@ -248,13 +257,13 @@ should be specific to minor mode and buffer local."
   (make-local-variable 'auto-save-hook)
   (make-local-variable 'auto-save-mode)
   (auto-save-mode t)
-  (add-hook 'auto-save-hook 'etherpad-save))
+  (add-hook 'auto-save-hook #'etherpad-save))
 
 
 (defun etherpad-idlesync-disable ()
   "Disable idle syncing."
   (interactive)
-  (remove-hook 'auto-save-hook 'etherpad-save))
+  (remove-hook 'auto-save-hook #'etherpad-save))
 
 (provide 'etherpad)
 
