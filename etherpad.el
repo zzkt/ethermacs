@@ -213,7 +213,7 @@ Should be available at https://<host>/api/1/openapi.json"
         (message "pad has been synced (at revision %s)" etherpad--local-pad-revision)))))
 
 
-(defun etherpad-before-change-function (begin end)
+(defun etherpad-before-change-function (_begin _end)
 "Function to run before etherpad update (buffer BEGIN and END).
 should be specific to minor mode and buffer local."
   (let* ((remote-revision (etherpad--api-pad-revision etherpad--local-pad-name))
@@ -221,7 +221,7 @@ should be specific to minor mode and buffer local."
     (when (> remote-revision local-revision)
       (etherpad-update))))
 
-(defun etherpad-after-change-function (begin end length)
+(defun etherpad-after-change-function (_begin _end _length)
   "Function to run after buuffer has changed (buffer BEGIN, END & LENGTH).
 should be specific to minor mode and buffer local."
   (etherpad-save))
@@ -239,8 +239,8 @@ should be specific to minor mode and buffer local."
   "Enable autosync."
   (interactive)
   (message "enabled autosync with etherpad server.")
-  (make-local-variable #'after-change-functions)
-  (make-local-variable #'before-change-functions)
+  (make-local-variable 'after-change-functions)
+  (make-local-variable 'before-change-functions)
   (add-hook 'after-change-functions #'etherpad-after-change-function)
   (add-hook 'before-change-functions #'etherpad-before-change-function))
 
@@ -265,6 +265,6 @@ should be specific to minor mode and buffer local."
   (interactive)
   (remove-hook 'auto-save-hook #'etherpad-save))
 
-(provide 'etherpad)
 
+(provide 'etherpad)
 ;;; etherpad.el ends here
