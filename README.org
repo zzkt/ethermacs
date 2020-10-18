@@ -2,6 +2,8 @@
 
 ** Etherpad & collaborative editing
 
+ [[https://melpa.org/#/etherpad][file:https://melpa.org/packages/etherpad-badge.svg]]
+    
 “Etherpad is a highly customizable Open Source online editor providing collaborative editing in really real-time. Etherpad allows you to edit documents collaboratively in real-time, much like a live multi-player editor that runs in your browser. Write articles, press releases, to-do lists, etc. together with your friends, fellow students or colleagues, all working on the same document at the same time.”  https://etherpad.org/
 
 The Etherpad API provides a way to add, delete and edit pads. It also enables access to changesets and author information required for displaying changes between revisions but doesn’t appear to provide a way to send changesets (c.f. using the API call [[https://etherpad.org/doc/v1.8.5/#index_getrevisionchangeset_padid_rev][getRevisionChangeset]] and the [[https://etherpad.org/doc/v1.8.5/#index_changeset_library][changeset]] format)
