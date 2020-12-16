@@ -44,11 +44,13 @@
 ;;  - not much in the way of error checking or recovery
 ;;  - etc
 
-
 ;;; Code:
 
-(require 'request)
+(add-to-list 'load-path ".")
+
 (require 'let-alist)
+(require 'ethersync)
+(require 'request)
 (require 'cl-lib)
 
 (defgroup etherpad nil
@@ -78,6 +80,12 @@
 (defvar etherpad--local-pad-revision ""
   "Buffer local pad details.")
 
+;; minor mode
+(define-minor-mode etherpad-mode
+  "Minor mode to sync changes with etherpad." nil " etherpad" nil
+  (if etherpad-mode
+      (ethersync--add-change-hooks)
+      (ethersync--remove-change-hooks)))
 
 ;; API functions
 
@@ -264,7 +272,6 @@ should be specific to minor mode and buffer local."
   "Disable idle syncing."
   (interactive)
   (remove-hook 'auto-save-hook #'etherpad-save))
-
 
 (provide 'etherpad)
 ;;; etherpad.el ends here
