@@ -425,6 +425,9 @@ example/reduced
 #+END_SRC
 
 
+#+begin_export latex
+\newpage
+#+end_export
 * various tools & accessories
 
  - Firefox/Chrome/Safari ->  network/ws/messages/console/log etc
