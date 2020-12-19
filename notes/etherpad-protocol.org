@@ -59,17 +59,9 @@ ep_server --> client: 3
 
 #+END_SRC
 
-#+RESULTS:
- [[file:proto-x1.png]]
-
-client -> ep_server:
-ep_server --> client:
-
-
 #+CAPTION: overview of etherpad/easysync protocol
 #+ATTR_ORG: :width 400
 #+ATTR_LaTeX: :height 15cm :placement [!h]
-#+RESULTS:
 [[file:proto-x1.png]]
 
 ** comment plugin
@@ -104,7 +96,6 @@ title comments
 #+CAPTION: comments
 #+ATTR_ORG: :width 400
 #+ATTR_LaTeX: :height 15cm :placement [!h]
-#+RESULTS:
 [[file:proto-x2.png]]
 
 ** example messages
