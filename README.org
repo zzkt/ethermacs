@@ -22,7 +22,7 @@ There is an experimental branch =ethersync= which enables realtime editing using
 
 ** install & configure
 
-The etherpad emacs interface can be installed from [[https://melpa.org/][MELPA]] (eventually) or manually via [[https://github.com/zzkt/etherpad-emacs][github]].
+The etherpad emacs interface can be installed from [[https://melpa.org/#/etherpad][MELPA]] or manually via [[https://github.com/zzkt/etherpad-emacs][github]].
 
 To connect to an existing etherpad server you need to configure the server url and have an API key.
 
