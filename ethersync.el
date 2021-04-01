@@ -5,7 +5,7 @@
 ;; Author: nik gaffney <nik@fo.am>
 ;; Created: 2020-12-12
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.1") (request "0.3") (let-alist "0.0"))
+;; Package-Requires: ((emacs "26.3") (request "0.3") (let-alist "0.0") (websocket "1.12") (parsec "0.1") (0xc "0.1"))
 ;; Keywords: comm, etherpad, collaborative editing
 ;; URL: https://github.com/zzkt/ethermacs
 

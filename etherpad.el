@@ -5,7 +5,7 @@
 ;; Author: nik gaffney <nik@fo.am>
 ;; Created: 2020-08-08
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.1") (request "0.3") (let-alist "0.0"))
+;; Package-Requires: ((emacs "26.3") (request "0.3") (let-alist "0.0") (websocket "1.12") (parsec "0.1") (0xc "0.1"))
 ;; Keywords: comm, etherpad, collaborative editing
 ;; URL: https://github.com/zzkt/ethermacs
 
@@ -38,7 +38,7 @@
 
 
 ;;  known bugs, limitations, shortcomings, etc
-;;  - doesn't do realtime editing
+;;  - various problems with realtime editing using easysync
 ;;  - the server and api key could be buffer local to enable editing on more than one server
 ;;  - doesn't automate API interface generation from openapi.json
 ;;  - not much in the way of error checking or recovery
