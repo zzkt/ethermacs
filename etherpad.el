@@ -80,12 +80,15 @@
 (defvar etherpad--local-pad-revision ""
   "Buffer local pad details.")
 
-;; minor mode
+
 (define-minor-mode etherpad-mode
-  "Minor mode to sync changes with etherpad." nil " etherpad" nil
+  "Minor mode to sync changes with etherpad."
+  :lighter " etherpad"
+  :keymap (make-sparse-keymap)
   (if etherpad-mode
       (ethersync--add-change-hooks)
       (ethersync--remove-change-hooks)))
+
 
 ;; API functions
 

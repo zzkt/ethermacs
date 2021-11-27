@@ -16,7 +16,7 @@
  possibly relevant parts of the etherpad code
   - https://github.com/ether/etherpad-lite/blob/develop/src/node/handler/PadMessageHandler.js
   - https://github.com/payload/ethersync/blob/master/src/ethersync.coffee
-  - code for a [[https://github.com/JohnMcLear/etherpad-cli-client/blob/master/lib/index.js][cli-client]] and the [[https://github.com/ether/etherpad-lite/tree/develop/src/static/js][javasctipt client]]
+  - code for a [[https://github.com/JohnMcLear/etherpad-cli-client/blob/master/lib/index.js][cli-client]] and the [[https://github.com/ether/etherpad-lite/tree/develop/src/static/js][javascript client]]
 
 * websockets & socket.io
 
@@ -39,7 +39,7 @@ browser client sends url with pad name to server (e.g.  https://etherpad.wikimed
 client -> ep_server: wss://example.org//socket.io/?EIO=3&transport=websocket
 ep_server --> client: 0 sid, upgrades, etc
 client -> ep_server: 2 CLIENT_READY padId, token, etc
-ep_server --> client: 42 CLIENT_VARS pad text, lots of junk about server, colours, authors, etc
+ep_server --> client: 42 CLIENT_VARS pad text, lots of detail about server, colours, authors, etc
 ep_server --> client: 42 USER_NEWINFO (if other active clients)
 
 == local edits ==
@@ -465,4 +465,78 @@ example/reduced
   < 0{"sid":"6_TVij3sJug26KFLAAGc","upgrades":[],"pingInterval":25000,"pingTimeout":5000}
   < 40
   >
+#+END_SRC
+
+#+BEGIN_SRC js
+[
+  "message",
+  {
+    "type": "COLLABROOM",
+    "data": {
+      "type": "NEW_CHANGES",
+      "newRev": 969,
+      "changeset": "Z:2r>2*0=1=5*1|1+1*1*2*3*4*5+1|1=1*6=1|1=4*7=1|1=4*8=1|1=a*9=1|1=5*0=1|1=f*0=1|1=q*5=1|1=4*6=1|1=4*7=1|1=4*8=1$\n*",
+      "apool": {
+        "numToAttrib": {
+          "0": [
+            "start",
+            "1"
+          ],
+          "1": [
+            "author",
+            "a.TA0tvO487Oh304Up"
+          ],
+          "2": [
+            "insertorder",
+            "first"
+          ],
+          "3": [
+            "list",
+            "number1"
+          ],
+          "4": [
+            "lmkr",
+            "1"
+          ],
+          "5": [
+            "start",
+            "2"
+          ],
+          "6": [
+            "start",
+            "3"
+          ],
+          "7": [
+            "start",
+            "4"
+          ],
+          "8": [
+            "start",
+            "5"
+          ],
+          "9": [
+            "start",
+            "6"
+          ]
+        },
+        "attribToNum": {
+          "start,1": 0,
+          "author,a.TA0tvO487Oh304Up": 1,
+          "insertorder,first": 2,
+          "list,number1": 3,
+          "lmkr,1": 4,
+          "start,2": 5,
+          "start,3": 6,
+          "start,4": 7,
+          "start,5": 8,
+          "start,6": 9
+        },
+        "nextNum": 10
+      },
+      "author": "a.TA0tvO487Oh304Up",
+      "currentTime": 1638017098574,
+      "timeDelta": 8923
+    }
+  }
+]
 #+END_SRC

@@ -37,7 +37,7 @@
 ;;  details -> https://etherpad.org/doc/v1.8.5/#index_http_api
 
 ;; current issues 2020-12-15 00:52:32
-;;  - on ws per buffer. buffer local. shared.
+;;  - one ws per buffer. buffer local. shared.
 ;;  - incorrect newline counts when sending changesets
 ;;  - problems w. deleting text and/or changing buffer size & change-hooks
 ;;  - see "Additional Constraints" of easysync
@@ -70,28 +70,50 @@
 (defvar-local ep--hearbeat-timer nil)
 (defvar-local ep--current-socket nil)
 
-;; enable/disable keep alive message to the server
-(defun ethersync-heartbeat-start ()
-  "Maintain connection to server with periodic pings."
-  (message "heartbeat started: %s" (current-buffer))
-  (setq ep--hearbeat-timer
-        (run-with-timer 5 15 #'wss-send "2")))
-
-(defun ethersync-heartbeat-stop ()
-  "Stop sending keep-alive messages."
-  (cancel-timer ep--hearbeat-timer))
 
 ;; buffering
 (defvar *etherpad-buffer* (generate-new-buffer "*etherpad*"))
 
+;; keep-alive message & heartbeat timers
+
+(defun ethersync-heartbeat-send ()
+  "Send a keep-alive message."
+  ;; only send if there is a current socket
+  ;; and delete an active timer when there isn't a socket open
+  (message "heartbeat? %s" (ethersync-current-socket))
+  (when (ethersync-current-socket)
+      (wss-send "2")
+      (message "heartbeat sent: %s" *etherpad-buffer*))
+  (when (not (ethersync-current-socket))
+    (ethersync-heartbeat-stop)
+     (message "heartbeat stopped: %s" ep--hearbeat-timer)))
+
+(defun ethersync-heartbeat-start ()
+  "Maintain connection to server with periodic pings."
+  (message "heartbeat started: %s" *etherpad-buffer*)
+  (setq ep--hearbeat-timer
+        (run-with-timer 5 15 #'ethersync-heartbeat-send))
+  (ethersync-current-socket))
+
+(defun ethersync-heartbeat-stop ()
+  "Stop sending keep-alive messages."
+  (when ep--hearbeat-timer
+    (cancel-timer ep--hearbeat-timer))
+  (setq ep--hearbeat-timer nil)
+  (message "heartbeat stopped: %s" *etherpad-buffer*))
+
+
+;; sockets
+
 (defun ethersync-current-socket (&optional socket)
   "Return currently active socket or set SOCKET as current."
-  (message "socket in buffer: %s" (current-buffer))
-  (if socket
-      (setq ep--current-socket socket)
-      ep--current-socket))
+  (when socket
+    (setq ep--current-socket socket))
+  (message "current socket: %s in buffer: %s" ep--current-socket *etherpad-buffer*))
+
 
 ;; setters
+
 (defun ethersync--set-local-rev (n)
   "Set the local revision."
   (message "current rev: %s" ep--local-rev)
@@ -382,9 +404,11 @@ Numeric offsets are calculated from the beginning of the buffer."
 
 (defun ethersync-wss-send (msg)
   "Send MSG to a websocket."
-  (when (stringp msg)
-    (websocket-send-text
-     (ethersync-current-socket) msg)))
+  (if (websocket-openp (ethersync-current-socket))
+      (when (stringp msg)
+        (websocket-send-text
+         (ethersync-current-socket) msg))
+     (message "websocket is closed. not sending: %s" msg)))
 
 
 ;; parsing & dispatch of incoming frames
