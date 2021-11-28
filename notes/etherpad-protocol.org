@@ -28,7 +28,9 @@ see  https://blog.abrochard.com/websockets.html and [[https://github.com/ahyatt/
 
 * protocol, probes & partials
 
-browser client sends url with pad name to server (e.g.  https://etherpad.wikimedia.org/p/test ) establishes session (sid) and receives token (in cookie data). updates, changes & pad metadata are sent via wss connection. (e.g. wss://etherpad.wikimedia.org/socket.io/?EIO=3&transport=websocket&sid=Ap47gBZD98dHcW38AoqY )
+browser client sends url with pad name to server (e.g.  https://etherpad.wikimedia.org/p/test ) establishes session (sid) and receives token (in cookie data). updates, changes & pad metadata are sent via wss connection.
+
+e.g. =wss://etherpad.wikimedia.org/socket.io/?EIO=3&transport=websocket&sid=Ap47gBZD98dHcW38AoqY=
 
 ** overview
 
@@ -56,12 +58,11 @@ note right: COLLABROOM
 == keep-alive ==
 client -> ep_server: 2
 ep_server --> client: 3
-
 #+END_SRC
 
 #+CAPTION: overview of etherpad/easysync protocol
 #+ATTR_ORG: :width 400
-#+ATTR_LaTeX: :height 15cm :placement [!h]
+#+ATTR_LaTeX: :height 15cm :placement [H]
 [[file:proto-x1.png]]
 
 ** comment plugin
@@ -95,24 +96,25 @@ title comments
 
 #+CAPTION: comments
 #+ATTR_ORG: :width 400
-#+ATTR_LaTeX: :height 15cm :placement [!h]
+#+ATTR_LaTeX: :height 15cm :placement [H]
 [[file:proto-x2.png]]
 
 ** example messages
 
 *init/request*
-#+BEGIN_SRC text
+#+BEGIN_SRC
 40/comment,
 
 42/comment,0["getComments",{"padId":"test"}]
 42/comment,1["getCommentReplies",{"padId":"test"}]
- 43/comment,0[{"comments":{"c-4U2BW8J2Lp0r68ZL":{"author":"a.0iRJZx7jiOAxVNMP","name":"zzkt","text":"yes","timestamp":1607769834917}}}]
+
+43/comment,0[{"comments":{"c-4U2BW8J2Lp0r68ZL":{"author":"a.0iRJZx7jiOAxVNMP","name":"zzkt","text":"yes","timestamp":1607769834917}}}]
 
 43/comment,1[{"replies":{}}]
 #+END_SRC
 
 *updates (new)*
-#+BEGIN_SRC text
+#+BEGIN_SRC
 42/comment,["pushAddCommentReply","c-reply-vMSgWSY4bFhaCCLR",{"commentId":"c-4U2BW8J2Lp0r68ZL","text":"no","changeTo":null,"changeFrom":null,"author":"a.0iRJZx7jiOAxVNMP","name":"zzkt","timestamp":1607770300230,"replyId":"c-reply-vMSgWSY4bFhaCCLR"}]
 
 42/comment,2["getCommentReplies",{"padId":"test"}]
@@ -121,14 +123,15 @@ title comments
 #+END_SRC
 
 *updates (changes)*
-#+BEGIN_SRC text
+#+BEGIN_SRC
 42/comment,["textCommentUpdated","c-reply-vMSgWSY4bFhaCCLR","not yet"]
 #+END_SRC
 
 *updates (deletion)*
-#+BEGIN_SRC text
+#+BEGIN_SRC
 42/comment,["commentDeleted","c-4U2BW8J2Lp0r68ZL"]
- 42["message",{"type":"COLLABROOM","data":{"type":"NEW_CHANGES","newRev":234,"changeset":"Z:e>0=7*0=4$","apool":{"numToAttrib":{"0":["comment","comment-deleted"]},"attribToNum":{"comment,comment-deleted":0},"nextNum":1},"author":"a.0iRJZx7jiOAxVNMP","currentTime":1607770511397,"timeDelta":null}}]
+
+42["message",{"type":"COLLABROOM","data":{"type":"NEW_CHANGES","newRev":234,"changeset":"Z:e>0=7*0=4$","apool":{"numToAttrib":{"0":["comment","comment-deleted"]},"attribToNum":{"comment,comment-deleted":0},"nextNum":1},"author":"a.0iRJZx7jiOAxVNMP","currentTime":1607770511397,"timeDelta":null}}]
 #+END_SRC
 
 
@@ -165,7 +168,7 @@ If we separate out the operations and convert the numbers to base 10, we get:
 
 Here are descriptions of the operations, where capital letters are variables:
 
-#+BEGIN_SRC text
+#+BEGIN_SRC
 ":N" : Source text has length N (must be first op)
 ">N" : Final text is N (positive) characters longer than source text (must be second op)
 "<N" : Final text is N (positive) characters shorter than source text (must be second op)
@@ -215,7 +218,7 @@ Attributes in an attribution string cannot be empty, like "(bold,)", they should
 ** attributes, colours, authors, etc
 
 the “apool”
-#+BEGIN_SRC text
+#+BEGIN_SRC
 "apool":{"numToAttrib":{"0":["author","a.touCZaixjPgKDSiN"]},"nextNum":1}
 #+END_SRC
 
@@ -223,7 +226,7 @@ author ids, names & colour mapping
 
 ** CLIENT_VARS
 
-#+BEGIN_SRC text
+#+BEGIN_SRC
 42["message",{"type":"CLIENT_VARS","data":{… [etc]
 #+END_SRC
 
@@ -249,7 +252,7 @@ plugins available
 
 example/reduced
 
-#+BEGIN_SRC js
+#+BEGIN_SRC
 [
   "message",
   {
@@ -421,7 +424,7 @@ example/reduced
 #+end_export
 * various tools & accessories
 
- - Firefox/Chrome/Safari ->  network/ws/messages/console/log etc
+ - Firefox/Chrome/Safari → network/ws/messages/console/log etc
  - =git clone https://github.com/guyzmo/PyEtherpadLite=
  - wscat
  - netcat
@@ -458,8 +461,7 @@ example/reduced
 #+END_SRC
 
 
-
-#+BEGIN_SRC shell
+#+BEGIN_SRC
   ❯ wscat  -c "wss://example.org/socket.io/?EIO=3&transport=websocket"
   Connected (press CTRL+C to quit)
   < 0{"sid":"6_TVij3sJug26KFLAAGc","upgrades":[],"pingInterval":25000,"pingTimeout":5000}
@@ -467,7 +469,7 @@ example/reduced
   >
 #+END_SRC
 
-#+BEGIN_SRC js
+#+BEGIN_SRC
 [
   "message",
   {

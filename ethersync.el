@@ -80,7 +80,7 @@
   "Send a keep-alive message."
   ;; only send if there is a current socket
   ;; and delete an active timer when there isn't a socket open
-  (message "heartbeat? %s" (ethersync-current-socket))
+  (message "heartbeat?")
   (when (ethersync-current-socket)
       (wss-send "2")
       (message "heartbeat sent: %s" *etherpad-buffer*))
@@ -109,7 +109,8 @@
   "Return currently active socket or set SOCKET as current."
   (when socket
     (setq ep--current-socket socket))
-  (message "current socket: %s in buffer: %s" ep--current-socket *etherpad-buffer*))
+  (message "current socket: set")
+  ep--current-socket)
 
 
 ;; setters
@@ -287,7 +288,7 @@
              (nth 2 changes))
            (chars
              (car (last changes))))
-      ;;(message "old length: %s new length: %s ops: %s chars: %s" old-length new-length ops chars)
+      (message "old length: %s new length: %s ops: %s" old-length new-length ops)
       (list old-length ops chars)
    )))
 
@@ -425,10 +426,13 @@ use let bindings for multiple connections."
                (parsec-collect* (parsec-re "[0-9]+")
                                 (parsec-many-s (parsec-any-ch))))))
     (message "frame: %s" (length fr0))
+    (when (= 2 (length fr0))
+       (message "frame: %s" fr0))
     (pcase (car frp)
            ("0" (ethersync--parse-0 frp))
            ("2" (ethersync--parse-2 frp))
            ("3" (message "3: keep-alive"))
+           ("40" (message "40: comment"))
            ("42" (ethersync--parse-42 frp))
           ))))
 
