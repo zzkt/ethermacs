@@ -48,8 +48,8 @@
 
 (add-to-list 'load-path ".")
 
-(require 'let-alist)
-(require 'ethersync)
+;; (require 'let-alist)
+(require 'etherpad-esync)
 (require 'request)
 (require 'cl-lib)
 
@@ -86,8 +86,8 @@
   :lighter " etherpad"
   :keymap (make-sparse-keymap)
   (if etherpad-mode
-      (ethersync--add-change-hooks)
-      (ethersync--remove-change-hooks)))
+      (etherpad-esync--add-change-hooks)
+      (etherpad-esync--remove-change-hooks)))
 
 
 ;; API functions
