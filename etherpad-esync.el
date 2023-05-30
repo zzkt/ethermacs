@@ -47,12 +47,12 @@
 
 ;;; Code:
 
-;; (require 'websocket)
-;; (require 'let-alist)
-;; (require 'calc-bin)
-;; (require 'parsec)
-;; (require '0xc)
-;; (require 's)
+(require 'websocket)
+(require 'let-alist)
+(require 'calc-bin)
+(require 'parsec)
+(require '0xc)
+(require 's)
 
 ;; debug details
 ;; (setq websocket-debug t)
@@ -199,10 +199,9 @@
 
 (defun etherpad-esync--encode-changeset (length change-size ops chars)
   "Create a changeset from some buffer activity. LENGTH CHANGE-SIZE OPS CHARS."
-  (cl-flet ((n-36 (number)
-                  ;; Convert a decimal NUMBER to base-36 as string.
-                  (let ((calc-number-radix 36))
-                    (downcase (math-format-radix number)))))
+  (cl-labels ((n-36 (n)
+                    (let ((calc-number-radix 36))
+                      (downcase (math-format-radix n)))))
            (message "encoding: o:%s (%s) cs:%s op:%s ch:%s"
                     length (n-36 length)
                     change-size ops chars)
