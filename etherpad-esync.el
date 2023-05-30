@@ -47,12 +47,12 @@
 
 ;;; Code:
 
-(require 'websocket)
-(require 'let-alist)
-(require 'calc-bin)
-(require 'parsec)
-(require '0xc)
-(require 's)
+;; (require 'websocket)
+;; (require 'let-alist)
+;; (require 'calc-bin)
+;; (require 'parsec)
+;; (require '0xc)
+;; (require 's)
 
 ;; debug details
 ;; (setq websocket-debug t)
