@@ -5,7 +5,6 @@
 ;; Author: nik gaffney <nik@fo.am>
 ;; Created: 2020-12-12
 ;; Version: 0.1
-;; Package-Requires: ((emacs "27.1") (request "0.3") (websocket "1.12") (parsec "0.1") (0xc "0.1"))
 ;; Keywords: comm, etherpad, collaborative editing
 ;; URL: https://github.com/zzkt/ethermacs
 
@@ -47,12 +46,12 @@
 
 ;;; Code:
 
-;; (require 'websocket)
-;; (require 'let-alist)
-;; (require 'calc-bin)
-;; (require 'parsec)
-;; (require '0xc)
-;; (require 's)
+(require 'websocket)
+(require 'let-alist)
+(require 'calc-bin)
+(require 'parsec)
+(require '0xc)
+(require 's)
 
 ;; debug details
 ;; (setq websocket-debug t)
@@ -202,38 +201,38 @@
   (cl-labels ((n-36 (n)
                     (let ((calc-number-radix 36))
                       (downcase (math-format-radix n)))))
-           (message "encoding: o:%s (%s) cs:%s op:%s ch:%s"
-                    length (n-36 length)
-                    change-size ops chars)
+             (message "encoding: o:%s (%s) cs:%s op:%s ch:%s"
+                      length (n-36 length)
+                      change-size ops chars)
 
-           (let* ((change (cond ((= 0 change-size) "=0")
-                                ((> 0 change-size)
-                                 (format "<%s" (n-36 (abs change-size))))
-                                ((< 0 change-size)
-                                 (format ">%s" (n-36 change-size)))))
-                  (newline-count (s-count-matches "\n" (buffer-substring
-                                                        (point-min)
-                                                        (point))))
-                  (offset (- (point) (length chars) 1))
-                  ;; offset is distance from point-min to point w.out inserted chars and w. newlines
-                  (pos-op (if (< 0 newline-count)
-                              (format "|%s=%s"
-                                      ;; 2 steps reqd. newline insert, then from beginning of line?
-                                      (n-36 newline-count)
-                                      (let ((p1 (- offset
-                                                   (caar
-                                                    (reverse
-                                                     (s-matched-positions-all
-                                                      "\n" (buffer-substring
-                                                            (point-min) (point))))))))
-                                        (message "offset: %s p1: %s" offset p1)
-                                        (if (= 1 p1)
-                                            (n-36 (+ 1 offset))
-                                            (format "%s=%s"
-                                                    (n-36 (- offset p1 -1))
-                                                    (n-36 (- p1 1))))))
-                              (format "=%s"  (n-36 offset)))))
-             (format "Z:%s%s%s%s$%s" (n-36 length) change pos-op ops chars))))
+             (let* ((change (cond ((= 0 change-size) "=0")
+                                  ((> 0 change-size)
+                                   (format "<%s" (n-36 (abs change-size))))
+                                  ((< 0 change-size)
+                                   (format ">%s" (n-36 change-size)))))
+                    (newline-count (s-count-matches "\n" (buffer-substring
+                                                          (point-min)
+                                                          (point))))
+                    (offset (- (point) (length chars) 1))
+                    ;; offset is distance from point-min to point w.out inserted chars and w. newlines
+                    (pos-op (if (< 0 newline-count)
+                                (format "|%s=%s"
+                                        ;; 2 steps reqd. newline insert, then from beginning of line?
+                                        (n-36 newline-count)
+                                        (let ((p1 (- offset
+                                                     (caar
+                                                      (reverse
+                                                       (s-matched-positions-all
+                                                        "\n" (buffer-substring
+                                                              (point-min) (point))))))))
+                                          (message "offset: %s p1: %s" offset p1)
+                                          (if (= 1 p1)
+                                              (n-36 (+ 1 offset))
+                                              (format "%s=%s"
+                                                      (n-36 (- offset p1 -1))
+                                                      (n-36 (- p1 1))))))
+                                (format "=%s"  (n-36 offset)))))
+               (format "Z:%s%s%s%s$%s" (n-36 length) change pos-op ops chars))))
 
 
 (defun etherpad-esync--send-user-changes (cs)
@@ -277,24 +276,25 @@
          pair should just be omitted."
 
   (let* ((changes
-           (parsec-with-input cs
-                              ;; a letter Z (the "magic character" and format version identifier)
-                              (parsec-str "Z")
-                              (parsec-collect*
-                               ;; source text length
-                               (parsec-re ":[0-9a-z]+")
-                               ;; change in text length
-                               (parsec-re "[>=<][0-9a-z]+")
-                               ;; insertion & deletion operations
-                               (parsec-many
-                                (parsec-or
-                                 (parsec-re "|[0-9a-z]+[+-=][0-9a-z]+")
-                                 (parsec-re "[><+-=*][0-9a-z]+")))
-                               ;; separator
-                               (parsec-str "$")
-                               ;; a string of characters used by insertion operations (the "char bank")
-                               (parsec-many-s
-                                (parsec-any-ch))))))
+           (parsec-with-input
+            cs
+            ;; a letter Z (the "magic character" and format version identifier)
+            (parsec-str "Z")
+            (parsec-collect*
+             ;; source text length
+             (parsec-re ":[0-9a-z]+")
+             ;; change in text length
+             (parsec-re "[>=<][0-9a-z]+")
+             ;; insertion & deletion operations
+             (parsec-many
+              (parsec-or
+               (parsec-re "|[0-9a-z]+[+-=][0-9a-z]+")
+               (parsec-re "[><+-=*][0-9a-z]+")))
+             ;; separator
+             (parsec-str "$")
+             ;; a string of characters used by insertion operations (the "char bank")
+             (parsec-many-s
+              (parsec-any-ch))))))
 
     (let* ((old-length
              (0xc-string-to-number (substring (car changes) 1) 36))
@@ -381,6 +381,7 @@ Numeric offsets are calculated from the beginning of the buffer."
       (insert chars))))
 
 (defun etherpad-esync-try-changeset (cs)
+  "Try changeset CS."
   (let* ((changes
            (etherpad-esync-parse-changeset cs))
          (len (nth 0 changes))
