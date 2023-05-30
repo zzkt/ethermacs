@@ -47,15 +47,15 @@
 
 ;;; Code:
 
-(require 'websocket)
-(require 'let-alist)
-(require 'calc-bin)
-(require 'parsec)
-(require '0xc)
-(require 's)
+;; (require 'websocket)
+;; (require 'let-alist)
+;; (require 'calc-bin)
+;; (require 'parsec)
+;; (require '0xc)
+;; (require 's)
 
 ;; debug details
-(setq websocket-debug t)
+;; (setq websocket-debug t)
 
 ;; local and buffer local variables
 (defvar-local etherpad-esync--pre-buffer-length 0)
@@ -136,12 +136,12 @@
   (message "setting up buffer change hooks")
   (with-current-buffer etherpad-esync-buffer
     (add-hook 'before-change-functions
-              'etherpad-esync--before-buffer-changes nil t)
+              #'etherpad-esync--before-buffer-changes nil t)
     ;; ordering is important...
     (add-hook 'after-change-functions
-              'etherpad-esync--after-buffer-changes 22 t)
+              #'etherpad-esync--after-buffer-changes 22 t)
     (add-hook 'after-change-functions
-              'etherpad-esync--send-changes 23 t)))
+              #'etherpad-esync--send-changes 23 t)))
 
 (defun etherpad-esync--remove-change-hooks ()
   "Remove predefined change hooks."
@@ -149,11 +149,11 @@
   (message "removing buffer change hooks")
   (with-current-buffer etherpad-esync-buffer
     (remove-hook 'before-change-functions
-                 'etherpad-esync--before-buffer-changes t)
+                 #'etherpad-esync--before-buffer-changes t)
     (remove-hook 'after-change-functions
-                 'etherpad-esync--after-buffer-changes t)
+                 #'etherpad-esync--after-buffer-changes t)
     (remove-hook 'after-change-functions
-                 'etherpad-esync--send-changes t)))
+                 #'etherpad-esync--send-changes t)))
 
 
 (defun etherpad-esync--before-buffer-changes (begin end)

@@ -5,7 +5,7 @@
 ;; Author: nik gaffney <nik@fo.am>
 ;; Created: 2020-08-08
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.3") (request "0.3") (let-alist "0.0") (websocket "1.12") (parsec "0.1") (0xc "0.1"))
+;; Package-Requires: ((emacs "27.1") (request "0.3") (let-alist "0.0") (websocket "1.12") (parsec "0.1") (0xc "0.1"))
 ;; Keywords: comm, etherpad, collaborative editing
 ;; URL: https://github.com/zzkt/ethermacs
 
@@ -48,10 +48,16 @@
 
 (add-to-list 'load-path ".")
 
-;; (require 'let-alist)
 (require 'etherpad-esync)
+(require 'let-alist)
+(require 'websocket)
+(require 'calc-bin)
 (require 'request)
 (require 'cl-lib)
+(require 'parsec)
+(require '0xc)
+(require 's)
+
 
 (defgroup etherpad nil
   "Etherpad edits."
