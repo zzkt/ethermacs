@@ -9,13 +9,13 @@
 
 * Real-time collaborative editing
 
-Real-time editing relies on a websocket interface to an etherpad server forcollaborative editing using either browser or emacs.
+Real-time editing relies on a websocket interface to an etherpad server for collaborative editing using either the browser or Emacs.
 
 To open a pad for editing  =M-x etherpad-connect= and enter the url of the pad.
 
 * Install & configure
 
-The etherpad emacs interface can be installed from [[https://melpa.org/#/etherpad][MELPA]] or manually via [[https://codeberg.org/zzkt/ethermacs][codeberg]].
+The etherpad Emacs interface can be installed from [[https://melpa.org/#/etherpad][MELPA]] or manually via [[https://codeberg.org/zzkt/ethermacs][codeberg]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package etherpad
