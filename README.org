@@ -1,48 +1,49 @@
 # -*- mode: org;  coding: utf-8; -*-
+#+title:Etherpad & collaborative editing
 
-** Etherpad & collaborative editing
+[[https://melpa.org/#/etherpad][file:https://melpa.org/packages/etherpad-badge.svg]]
 
- [[https://melpa.org/#/etherpad][file:https://melpa.org/packages/etherpad-badge.svg]]
-
-“Etherpad is a highly customizable Open Source online editor providing collaborative editing in really real-time. Etherpad allows you to edit documents collaboratively in real-time, much like a live multi-player editor that runs in your browser. Write articles, press releases, to-do lists, etc. together with your friends, fellow students or colleagues, all working on the same document at the same time.”  https://etherpad.org/
-
-The Etherpad API provides a way to add, delete and edit pads. It also enables access to changesets and author information required for displaying changes between revisions but doesn’t appear to provide a way to send changesets (c.f. using the API call [[https://etherpad.org/doc/v1.8.5/#index_getrevisionchangeset_padid_rev][getRevisionChangeset]] and the [[https://etherpad.org/doc/v1.8.5/#index_changeset_library][changeset]] format)
+“Etherpad is a highly customizable Open Source online editor providing collaborative editing in really real-time. Etherpad allows you to edit documents collaboratively in real-time, much like a live multi-player editor that runs in your browser. Write articles, press releases, to-do lists, etc. together with your friends, fellow students or colleagues, all working on the same document at the same time.” https://etherpad.org/
 
 [[layered-0.jpg]]
 
-** un-collaborative editing
+* Real-time collaborative editing
 
-This package enables read-write access to pads with emacs, but is not (yet) suitable for general use as an Etherpad client (compare [[https://github.com/JohnMcLear/etherpad-cli-client][etherpad-cli-client]])
+Real-time editing relies on a websocket interface to an etherpad server forcollaborative editing using either browser or emacs.
 
-It provides a quick&dirty way to edit pads on an Etherpad server from emacs as if they were filelike (It uses the Etherpad API rather than the socket.io interface). It doesn’t provide an efficient real-time interface for collaborative editing and will overwrite author information. It tries to warn you if the pad on the server has been changed if editing asynchronously (c.f ’file changed on disk’) There is a simplistic autosync mode where every change to the local buffer is written to the server, which is slow (there is a complete pad update for every character) inefficient, and collision prone (since it relies on revision numbers to sync). There is no diff interface or way to resolve divergent changes.
+To open a pad for editing  =M-x etherpad-connect= and enter the url of the pad.
 
-** realtime collaborative editing
+* Install & configure
 
-There is an experimental branch =ethersync= which enables realtime editing using the socket.io interface to an etherpad server. It’s currently unstable and incomplete, but works as a proof-of-concept and basis for further development.
-
-** install & configure
-
-The etherpad emacs interface can be installed from [[https://melpa.org/#/etherpad][MELPA]] or manually via [[https://github.com/zzkt/etherpad-emacs][github]].
-
-To connect to an existing etherpad server you need to configure the server url and have an API key.
+The etherpad emacs interface can be installed from [[https://melpa.org/#/etherpad][MELPA]] or manually via [[https://codeberg.org/zzkt/ethermacs][codeberg]].
 
 #+BEGIN_SRC emacs-lisp
-    (use-package etherpad
-	:config (setq etherpad-server "http://example.org/"
-		      etherpad-apikey "…"
-		      etherpad-autosync nil)
-	:bind (("C-c e" . etherpad-edit)
-	       :map etherpad-mode-map
-	       ("C-c c" . etherpad-save)))
+(use-package etherpad
+  :config (setq etherpad-default-server "https://pad-dev.etherpad.org/"
+                etherpad-author-name "Tashmetum"
+                etherpad-author-colors t
+                etherpad-debug nil))
 #+END_SRC
 
-To open a pad for editing try ~M-x etherpad-edit~ and enter the name of the pad.
+See also =M-x customize-group RET etherpad=
 
-To update a pad with changes from the current buffer use ~etherpad-save~ (which can be bound to ~C-c c~). If the pad has changed there may be a warning about changes/sync/etc.
+Re: [[https://github.com/ether/etherpad/pull/7773][ether/etherpad#7773]]
 
-Automatic sync between an emacs buffer and the etherpad server can be enabled by setting ~etherpad-autosync~ or interactively with ~etherpad-autosync-enable~ or ~etherpad-autosync-disable~ (and/or toggled with ~etherpad-autosync-toggle~)
+#+BEGIN_SRC emacs-lisp
+(setq etherpad-fixed-commit-window t
+      etherpad-commit-window-time 1800)
+#+END_SRC
 
-** Further
+** Key bindings
+
+ - =C-c C-c=  etherpad-connect
+ - =C-c C-l=  etherpad-disconnect
+ - =C-c C-u=  etherpad-list-users
+ - =C-c C-w=  etherpad-who-here
+ - =C-c C-f=  etherpad-toggle-author-colors
+ - =C-c C-e=  etherpad-export
+
+* Further
  - [[https://etherpad.org/doc/v1.8.4/#index_api_methods][Etherpad HTTP API reference]]
  - [[https://raw.githubusercontent.com/ether/etherpad-lite/master/doc/easysync/easysync-full-description.pdf][Etherpad and EasySync Technical Manual]] (pdf)
  - [[https://lists.gnu.org/archive/html/emacs-devel/2020-10/msg00238.html][Re: Question collaborative editing]] (CRDT based collaborative editing in emacs)
