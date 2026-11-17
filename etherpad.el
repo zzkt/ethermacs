@@ -1584,6 +1584,18 @@ otherwise REVERSE decides (nil keeps CS1 insert first)."
 
 ;;; Changeset generation
 
+(defun etherpad--canonical-multiline (opcode text attribs)
+  "Return canonical OPCODE ops covering TEXT with ATTRIBS.
+An op that spans newlines must end at a line boundary, if a seqeunce contains
+a newline but does not end with one, split at the last newline."
+  (let* ((len (length text))
+         (last-nl (cl-position ?\n text :from-end t)))
+    (if (and last-nl (< (1+ last-nl) len))
+        (list (list opcode (1+ last-nl)
+                    (etherpad--count-newlines text 0 (1+ last-nl)) attribs)
+              (list opcode (- len (1+ last-nl)) 0 attribs))
+      (list (list opcode len (etherpad--count-newlines text) attribs)))))
+
 (defun etherpad--make-changeset (old-text new-text &optional author-num)
   "Build a changeset alist transforming OLD-TEXT into NEW-TEXT.
 If AUTHOR-NUM is given, insert ops will use it for the author attribute."
@@ -1607,26 +1619,16 @@ If AUTHOR-NUM is given, insert ops will use it for the author attribute."
            (ins-len (length inserted))
            (ops nil))
       (when (> prefix 0)
-        (push (list "keep"
-                    prefix (etherpad--count-newlines old-text 0 prefix) nil)
-              ops))
+        (dolist (op (etherpad--canonical-multiline
+                     "keep" (substring old-text 0 prefix) nil))
+          (push op ops)))
       (when (> del-len 0)
-        (push (list "delete"
-                    del-len (etherpad--count-newlines deleted) nil)
-              ops))
+        (dolist (op (etherpad--canonical-multiline "delete" deleted nil))
+          (push op ops)))
       (when (> ins-len 0)
-        (let* ((attribs (and author-num (list author-num)))
-               (last-nl (cl-position ?\n inserted :from-end t)))
-          (if (and last-nl (< (1+ last-nl) ins-len))
-              (progn
-                (push (list "insert" (1+ last-nl)
-                            (etherpad--count-newlines inserted 0 (1+ last-nl))
-                            attribs)
-                      ops)
-                (push (list "insert" (- ins-len (1+ last-nl)) 0 attribs) ops))
-            (push (list "insert" ins-len
-                        (etherpad--count-newlines inserted) attribs)
-                  ops))))
+        (dolist (op (etherpad--canonical-multiline
+                     "insert" inserted (and author-num (list author-num))))
+          (push op ops)))
       (list (cons 'old-len old-len)
             (cons 'net-delta (- new-len old-len))
             (cons 'ops (nreverse ops))
