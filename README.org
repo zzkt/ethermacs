@@ -1,5 +1,5 @@
 # -*- mode: org;  coding: utf-8; -*-
-#+title:Etherpad & collaborative editing
+#+title: Etherpad & collaborative editing
 
 [[https://melpa.org/#/etherpad][file:https://melpa.org/packages/etherpad-badge.svg]]
 
@@ -15,7 +15,7 @@ To open a pad for editing  =M-x etherpad-connect= and enter the url of the pad.
 
 * Install & configure
 
-The etherpad Emacs interface can be installed from [[https://melpa.org/#/etherpad][MELPA]] or manually via [[https://codeberg.org/zzkt/ethermacs][codeberg]].
+The etherpad Emacs interface can be installed from [[https://melpa.org/#/etherpad][MELPA]] or manually via [[https://codeberg.org/zzkt/ethermacs][codeberg]]. If you are using =use-package=, it can be configured with useful defaults;
 
 #+BEGIN_SRC emacs-lisp
 (use-package etherpad
@@ -26,13 +26,6 @@ The etherpad Emacs interface can be installed from [[https://melpa.org/#/etherpa
 #+END_SRC
 
 See also =M-x customize-group RET etherpad=
-
-Re: [[https://github.com/ether/etherpad/pull/7773][ether/etherpad#7773]]
-
-#+BEGIN_SRC emacs-lisp
-(setq etherpad-fixed-commit-window t
-      etherpad-commit-window-time 1800)
-#+END_SRC
 
 ** Key bindings
 

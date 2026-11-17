@@ -87,7 +87,7 @@ resynced. Set to nil to disable."
                  (number :tag "Seconds"))
   :group 'etherpad)
 
-(defcustom etherpad-idle-batch-ms 300
+(defcustom etherpad-idle-batch-ms 100
   "Idle time (milliseconds) before sending a changeset."
   :type 'number :group 'etherpad)
 
@@ -95,7 +95,7 @@ resynced. Set to nil to disable."
   "Maximum wait time (milliseconds) before sending a queued changeset."
   :type 'number :group 'etherpad)
 
-(defcustom etherpad-fixed-commit-window t
+(defcustom etherpad-fixed-commit-window nil
   "Batch outbound changesets with a fixed cadence.
 This is a workaround for an upstream Etherpad bug triggered by a series
 of rapid NEW_CHANGES. See https://github.com/ether/etherpad/pull/7773"
